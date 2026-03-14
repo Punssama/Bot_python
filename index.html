@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Punssama | SaaS Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0b0f19; color: #a0aec0; font-family: 'Inter', sans-serif; }
+        .neon-title { color: #6366f1; text-shadow: 0 0 15px rgba(99, 102, 241, 0.5); font-weight: 800; }
+        .card { background: #161e2d; border: 1px solid #2d3748; border-radius: 16px; margin-top: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4); }
+        .table { color: #e2e8f0; margin-bottom: 0; }
+        .badge-passed { background-color: #065f46; color: #34d399; padding: 0.5rem 1rem; border-radius: 20px; }
+        .badge-failed { background-color: #7f1d1d; color: #f87171; padding: 0.5rem 1rem; border-radius: 20px; }
+        .metric { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; }
+        .status-text { color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="text-center">
+            <h1 class="neon-title display-4">🛡️ PUNSSAMA SCANNER</h1>
+            <p>Hệ thống giám sát chất lượng mã nguồn tự động</p>
+        </div>
+
+        <div class="card overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-4">Repository</th>
+                            <th>Thời gian quét</th>
+                            <th>Trạng thái</th>
+                            <th>Bugs</th>
+                            <th>Lỗ hổng</th>
+                            <th>Code Smells</th>
+                        </tr>
+                    </thead>
+                    <tbody id="content">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+        <p id="status" class="text-center mt-4 small status-text">Đang tải dữ liệu...</p>
+    </div>
+
+    <script>
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        async function loadData() {
+            const contentEl = document.getElementById('content');
+            const statusEl = document.getElementById('status');
+
+            try {
+                const res = await fetch('/api/scans', { cache: 'no-store' });
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                if (!Array.isArray(data) || data.length === 0) {
+                    contentEl.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-4">Chưa có dữ liệu quét.</td>
+                        </tr>
+                    `;
+                    statusEl.textContent = 'Dữ liệu tự động cập nhật mỗi 5 giây...';
+                    return;
+                }
+
+                contentEl.innerHTML = data.map(i => `
+                    <tr>
+                        <td class="ps-4"><strong>${escapeHtml(i.repo)}</strong></td>
+                        <td>${escapeHtml(i.time)}</td>
+                        <td><span class="${i.status === 'PASSED' ? 'badge-passed' : 'badge-failed'}">${escapeHtml(i.status)}</span></td>
+                        <td class="metric">${escapeHtml(i.bugs)} 🐛</td>
+                        <td class="metric">${escapeHtml(i.vulnerabilities)} 🛡️</td>
+                        <td class="metric">${escapeHtml(i.smells)} 👃</td>
+                    </tr>
+                `).join('');
+
+                const now = new Date();
+                statusEl.textContent = `Cập nhật lúc ${now.toLocaleTimeString('vi-VN')} - tự động làm mới mỗi 5 giây.`;
+            } catch (error) {
+                contentEl.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-danger">Không tải được dữ liệu từ /api/scans.</td>
+                    </tr>
+                `;
+                statusEl.textContent = 'Lỗi tải dữ liệu. Hệ thống sẽ thử lại sau 5 giây.';
+            }
+        }
+
+        loadData();
+        setInterval(loadData, 5000);
+    </script>
+</body>
+</html>
