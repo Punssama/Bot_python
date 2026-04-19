@@ -1,6 +1,38 @@
 [
   {
     "repo": "QuanLyKTX",
+    "time": "11:23:56 15/03/2026",
+    "status": "PASSED",
+    "bugs": "0",
+    "vulnerabilities": "1",
+    "smells": "0"
+  },
+  {
+    "repo": "QuanLyKTX",
+    "time": "11:18:20 15/03/2026",
+    "status": "PASSED",
+    "bugs": "0",
+    "vulnerabilities": "1",
+    "smells": "0"
+  },
+  {
+    "repo": "Bot_python",
+    "time": "01:08:17 15/03/2026",
+    "status": "PASSED",
+    "bugs": "1",
+    "vulnerabilities": "0",
+    "smells": "4"
+  },
+  {
+    "repo": "QuanLyKTX",
+    "time": "01:08:05 15/03/2026",
+    "status": "PASSED",
+    "bugs": "0",
+    "vulnerabilities": "1",
+    "smells": "0"
+  },
+  {
+    "repo": "QuanLyKTX",
     "time": "01:00:40 15/03/2026",
     "status": "PASSED",
     "bugs": "0",

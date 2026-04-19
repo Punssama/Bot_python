@@ -25,7 +25,7 @@ PRIVATE_KEY_PATH = os.getenv("GITHUB_PRIVATE_KEY_PATH")
 SONAR_URL = os.getenv("SONAR_URL")
 SONAR_TOKEN = os.getenv("SONAR_TOKEN")
 WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET")
-SONAR_API_URL = os.getenv("SONAR_API_URL", "http://localhost:80")
+SONAR_API_URL = os.getenv("SONAR_API_URL", "http://localhost:8081")
 LOG_FILE = "scans.json"
 
 app = FastAPI(title="Punssama Dashboard v4")
