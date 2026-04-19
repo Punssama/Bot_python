@@ -203,7 +203,7 @@ def run_analysis_pipeline(repo_url: str, repo_name: str, installation_id: int) -
             "sonarsource/sonar-scanner-cli",
             f"-Dsonar.projectKey={repo_name}",
             f"-Dsonar.host.url={SONAR_URL}",
-            f"-Dsonar.login={SONAR_TOKEN}",
+            f"-Dsonar.token={SONAR_TOKEN}",
             "-Dsonar.scm.disabled=true",
         ]
         subprocess.run(scan_cmd, check=True)
